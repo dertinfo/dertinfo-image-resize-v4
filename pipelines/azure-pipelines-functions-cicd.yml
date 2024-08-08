@@ -1,10 +1,14 @@
+# Trigger the pipeline on pushes to the main branch
 trigger:
   branches:
    include:
      - main
-  paths:
-    include:
-      - dertinfo-functions
+
+# Do not trigger the pipeline on pull requests
+pr:
+  branches:
+    exclude:
+      - '*'
 
 stages:
 - stage: 'Build'
@@ -16,7 +20,7 @@ stages:
       vmImage: 'ubuntu-latest'
 
     variables:
-      dotnetSdkVersion: '3.x'
+      dotnetSdkVersion: '8.x'
 
     steps:
     - task: UseDotNet@2
@@ -28,20 +32,20 @@ stages:
       displayName: 'Restore project dependencies'
       inputs:
         command: 'restore'
-        projects: '**/dertinfo-functions.csproj'
+        projects: '**/DertInfoImageResize.csproj'
 
     - task: DotNetCoreCLI@2
       displayName: 'Build the project - $(buildConfiguration)'
       inputs:
         command: 'build'
         arguments: '--no-restore --configuration $(buildConfiguration)'
-        projects: '**/dertinfo-functions.csproj'
+        projects: '**/DertInfoImageResize.csproj'
 
     - task: DotNetCoreCLI@2
       displayName: 'Publish the project - $(buildConfiguration)'
       inputs:
         command: 'publish'
-        projects: '**/dertinfo-functions.csproj'
+        projects: '**/DertInfoImageResize.csproj'
         publishWebProjects: false
         arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
         zipAfterPublish: true
