@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DertInfoImageRezise", "dertinfo-image-resize\DertInfoImageRezise.csproj", "{42B16D9B-79F0-4317-BA96-03DC52A14178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DertInfoImageResize", "dertinfo-image-resize\DertInfoImageResize.csproj", "{42B16D9B-79F0-4317-BA96-03DC52A14178}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
