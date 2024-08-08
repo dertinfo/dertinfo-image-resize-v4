@@ -84,7 +84,7 @@ stages:
       vmImage: 'ubuntu-latest'
     environment: Test
     variables:
-    - group: CD_Pipeline
+    - group: DertInfoImageResizeV4_VariablesGroup
     strategy:
       runOnce:
         deploy:
@@ -96,7 +96,7 @@ stages:
             inputs:
               azureSubscription: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
               appType: 'webApp'
-              appName: '$(TestEnvFunctionsWebAppName)'
+              appName: '$(FunctionAppName_Stg)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
               deploymentMethod: 'auto'
 
@@ -109,7 +109,7 @@ stages:
       vmImage: 'ubuntu-latest'
     environment: Live
     variables:
-    - group: CD_Pipeline
+    - group: DertInfoImageResizeV4_VariablesGroup
     strategy:
       runOnce:
         deploy:
@@ -121,6 +121,6 @@ stages:
             inputs:
               azureSubscription: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
               appType: 'webApp'
-              appName: '$(LiveEnvFunctionsWebAppName)'
+              appName: '$(FunctionAppName_Prod)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
               deploymentMethod: 'auto'
