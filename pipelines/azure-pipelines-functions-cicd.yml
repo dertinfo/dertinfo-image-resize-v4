@@ -1,0 +1,122 @@
+trigger:
+  branches:
+   include:
+     - main
+  paths:
+    include:
+      - dertinfo-functions
+
+stages:
+- stage: 'Build'
+  displayName: 'Build and Publish the Functions'
+  jobs:
+  - job: 'Build'
+    displayName: 'Build the Function App'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    variables:
+      dotnetSdkVersion: '3.x'
+
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+      inputs:
+        version: '$(dotnetSdkVersion)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore project dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/dertinfo-functions.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build the project - $(buildConfiguration)'
+      inputs:
+        command: 'build'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+        projects: '**/dertinfo-functions.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish the project - $(buildConfiguration)'
+      inputs:
+        command: 'publish'
+        projects: '**/dertinfo-functions.csproj'
+        publishWebProjects: false
+        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
+
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: drop
+
+- stage: 'OutputInformation'
+  displayName: 'Validate The Build'
+  dependsOn: Build
+  jobs:
+  - job: 'SourceBranch'
+    displayName: 'Identify Source Branch'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - bash: echo The Build.SourceBranch is - $BUILD_SOURCEBRANCH
+        env:
+          BUILD_SOURCEBRANCH: $(Build.SourceBranch)
+      - bash: echo The Build.Reason is - $BUILD_REASON
+        env:
+          BUILD_REASON: $(Build.Reason)
+      - bash: echo The Build.ArtifactStagingDirectory is - $BUILD_ARTIFACTSTAGINGDIRECTORY
+        env:
+          BUILD_ARTIFACTSTAGINGDIRECTORY: $(Build.ArtifactStagingDirectory)
+      - bash: echo The Build.BuildNumber is - $BUILD_BUILDNUMBER
+        env:
+          BUILD_BUILDNUMBER: $(Build.BuildNumber)
+
+- stage: 'DeployToTest'
+  displayName: 'Deploy API to Test'
+  dependsOn: OutputInformation
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Test
+    variables:
+    - group: CD_Pipeline
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
+              appType: 'webApp'
+              appName: '$(TestEnvFunctionsWebAppName)'
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              deploymentMethod: 'auto'
+
+- stage: 'DeployToLive'
+  displayName: 'Deploy API to Live'
+  dependsOn: DeployToTest
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Live
+    variables:
+    - group: CD_Pipeline
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
+              appType: 'webApp'
+              appName: '$(LiveEnvFunctionsWebAppName)'
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              deploymentMethod: 'auto'

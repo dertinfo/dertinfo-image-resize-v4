@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "value": "di-func-imageresizev4-prod"
+    },
+    "appServicePlanName": {
+      "value": "di-asp-imageresizev4-prod"
+    },
+    "deploymentType": {
+      "value": "prod"
+    },
+    "imagesStorageAccountName": {
+      "value": "dertinfoliveimagessa"
+    },
+    "imagesStorageAccountResourceGroup": {
+      "value": "dertinfo-live-rg"
+    }
+  }
+}

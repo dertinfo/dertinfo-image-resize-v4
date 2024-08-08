@@ -1,0 +1,135 @@
+/*
+Outline: This bicep file is used to deploy an azure function app with the specified app settings.
+Author: David Hall
+Date: 2024-08-08
+Notes: 
+- 
+Commands:
+
+Deploy the function app using the Azure CLI:
+az group create --name di-rg-imageresizev4-[env] --location uksouth
+az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy-function-app.bicep --parameters @deploy-function-app-params-[env].json
+*/
+
+// #####################################################
+// Parameters
+// #####################################################
+
+@description('The name of the function app that you wish to create.')
+param functionAppName string = 'di-func-imageresizev4-dev'
+
+@description('The name of the  App Service plan.')
+param appServicePlanName string = 'di-asp-imageresizev4-dev'
+
+@description('The name of the  App Service plan.')
+param imagesStorageAccountName string
+
+@description('The name of the  App Service plan.')
+param imagesStorageAccountResourceGroup string
+
+@description('Location for all resources.')
+param location string = resourceGroup().location
+
+@description('Deployment type for the resources. The environment that the resources are being deployed to.')
+@allowed([
+  'dev'
+  'stg'
+  'prod'
+])
+param deploymentType string = 'dev'
+
+@description('Storage Account type')
+@allowed([
+  'Standard_LRS'
+  'Standard_GRS'
+  'Standard_RAGRS'
+])
+param storageAccountType string = 'Standard_LRS'
+
+// #####################################################
+// Variables
+// #####################################################
+
+// Determine the name of the storage account used by the function app.
+var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+
+// #####################################################
+// References
+// #####################################################
+
+resource imagesStorageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
+  name: imagesStorageAccountName
+  scope: resourceGroup(imagesStorageAccountResourceGroup)
+}
+
+// #####################################################
+// Resources
+// #####################################################
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: storageAccountType
+  }
+  kind: 'Storage'
+  properties: {
+    supportsHttpsTrafficOnly: true
+    defaultToOAuthAuthentication: true
+  }
+  tags: {
+    environment: deploymentType
+  }
+}
+
+resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: appServicePlanName
+  location: location
+  sku: {
+    name: 'Y1'
+    tier: 'Dynamic'
+  }
+  properties: {}
+}
+
+resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: functionAppName
+  location: location
+  kind: 'functionapp'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    serverFarmId: hostingPlan.id
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet-isolated'
+        }
+        {
+          name: 'StorageConnection:Images'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${imagesStorageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${imagesStorageAccount.listKeys().keys[0].value}'
+        }
+      ]
+    }
+  }
+  tags: {
+    environment: deploymentType
+  }
+}
+
+// #####################################################
+// Modules
+// #####################################################
+
+
+
+
+
+
+

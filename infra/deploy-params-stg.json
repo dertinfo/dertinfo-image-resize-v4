@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "value": "di-func-imageresizev4-stg"
+    },
+    "appServicePlanName": {
+      "value": "di-asp-imageresizev4-stg"
+    },
+    "deploymentType": {
+      "value": "stg"
+    },
+    "imagesStorageAccountName": {
+      "value": "dertinfotestimagessa"
+    },
+    "imagesStorageAccountResourceGroup": {
+      "value": "dertinfo-test-rg"
+    }
+  }
+}
