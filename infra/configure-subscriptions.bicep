@@ -30,9 +30,9 @@ var eventOriginalImagesSubscriptionName = 'di-evgs-event-originals'
 var sheetOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
 
 // Blob Paths for filtering events
-var groupOriginalImagesFilterPath = '/groupimages/originals-a/'
-var eventOriginalImagesFilterPath = '/eventimages/originals-a/'
-var sheetOriginalImagesFilterPath = '/sheetimages/originals-a/'
+var groupOriginalImagesFilterPath = 'groupimages/blobs/originals-a/'
+var eventOriginalImagesFilterPath = 'eventimages/blobs/originals-a/'
+var sheetOriginalImagesFilterPath = 'sheetimages/blobs/originals-a/'
 
 // #####################################################
 // References
@@ -69,15 +69,7 @@ resource eventSubscriptionGroupImages 'Microsoft.EventGrid/systemTopics/eventSub
       includedEventTypes: [
         'Microsoft.Storage.BlobCreated'
       ]
-      advancedFilters: [
-        {
-          operatorType: 'StringBeginsWith'
-          key: 'subject'
-          values: [
-            '/blobServices/default/containers/${groupOriginalImagesFilterPath}'
-          ]
-        }
-      ]
+      subjectBeginsWith: '/blobServices/default/containers/${groupOriginalImagesFilterPath}'
     }
   }
 }
@@ -96,15 +88,7 @@ resource eventSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSub
       includedEventTypes: [
         'Microsoft.Storage.BlobCreated'
       ]
-      advancedFilters: [
-        {
-          operatorType: 'StringBeginsWith'
-          key: 'subject'
-          values: [
-            '/blobServices/default/containers/${eventOriginalImagesFilterPath}'
-          ]
-        }
-      ]
+      subjectBeginsWith: '/blobServices/default/containers/${eventOriginalImagesFilterPath}'
     }
   }
 }
@@ -123,15 +107,7 @@ resource sheetSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSub
       includedEventTypes: [
         'Microsoft.Storage.BlobCreated'
       ]
-      advancedFilters: [
-        {
-          operatorType: 'StringBeginsWith'
-          key: 'subject'
-          values: [
-            '/blobServices/default/containers/${sheetOriginalImagesFilterPath}'
-          ]
-        }
-      ]
+      subjectBeginsWith: '/blobServices/default/containers/${sheetOriginalImagesFilterPath}'
     }
   }
 }

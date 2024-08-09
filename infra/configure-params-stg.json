@@ -10,9 +10,6 @@
         },
         "imagesStorageAccountResourceGroup": {
             "value": "dertinfo-test-rg"
-        },
-        "engTag": {
-            "value": "stg"
         }
     }
 }

@@ -28,11 +28,11 @@ param imagesStorageAccountResourceGroup string
 // Variables
 // #####################################################
 
-var allKeys = consumerFunctionApp.listKeys().keys // Get all the keys for the function app
-var blobExtensionKey = filter(allKeys, key => key.keyName == 'blobs_extension')[0] // We want the key with the name blobs_extension
-var groupFunctionName = 'GroupImageResize'
-var eventFunctionName = 'EventImageResize'
-var sheetFunctionName = 'SheetImageResize'
+var systemKeys = functionAppHost.listKeys().systemKeys // Get all the system keys for the function app
+var blobExtensionKey = systemKeys.blobs_extension // We want the key with the name blobs_extension
+var groupFunctionName = 'ResizeGroupImages'
+var eventFunctionName = 'ResizeEventImages'
+var sheetFunctionName = 'ResizeSheetImages'
 var groupImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${groupFunctionName}&code=${blobExtensionKey}'
 var eventImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${eventFunctionName}&code=${blobExtensionKey}'
 var sheetImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${sheetFunctionName}&code=${blobExtensionKey}'
@@ -41,8 +41,13 @@ var sheetImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.
 // References
 // #####################################################
 
-resource consumerFunctionApp 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
+resource functionApp 'Microsoft.Web/sites@2021-03-01' existing = {
   name: functionAppName
+}
+
+resource functionAppHost 'Microsoft.Web/sites/host@2022-09-01' existing = {
+  name: 'default'
+  parent: functionApp
 }
 
 // #####################################################
@@ -63,3 +68,4 @@ module eventGridSubscriptionsModule './configure-subscriptions.bicep' = {
     sheetImageResizeWebhookEndpoint: sheetImageResizeWebhookEndpoint
   }
 }
+
