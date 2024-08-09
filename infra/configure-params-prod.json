@@ -6,10 +6,10 @@
             "value": "di-func-imageresizev4-prod"
         },
         "imagesStorageAccountName": {
-            "value": "dertinfotestimagessa"
+            "value": "dertinfoliveimagessa"
         },
         "imagesStorageAccountResourceGroup": {
-            "value": "dertinfo-test-rg"
+            "value": "dertinfo-live-rg"
         }
     }
 }
