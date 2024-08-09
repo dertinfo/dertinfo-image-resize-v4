@@ -16,6 +16,12 @@
     },
     "imagesStorageAccountResourceGroup": {
       "value": "dertinfo-test-rg"
+    },
+    "applicationInsightsName": {
+      "value": "dertinfo-test-ais"
+    },
+    "applicationInsightsResourceGroup": {
+      "value": "di-rg-monitoring-stg"
     }
   }
 }

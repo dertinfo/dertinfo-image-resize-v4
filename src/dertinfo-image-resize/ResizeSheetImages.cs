@@ -19,7 +19,7 @@ namespace DertInfo.ImageResize
         }
 
         [Function(nameof(ResizeSheetImages))]
-        public async Task Run([BlobTrigger(ImageFolder + "/originals-a/{name}", Connection = "StorageConnection:Images")] Stream inputBlob, string name)
+        public async Task Run([BlobTrigger(ImageFolder + "/originals-a/{name}", Source = BlobTriggerSource.EventGrid, Connection = "StorageConnection:Images")] Stream inputBlob, string name)
         {
             _logger.LogInformation($"Resize {ImageFolder} - Processed blob: {name}");
 

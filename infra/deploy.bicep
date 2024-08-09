@@ -18,14 +18,20 @@ az deployment group create --resource-group di-rg-imageresizev4-[env] --template
 @description('The name of the function app that you wish to create.')
 param functionAppName string = 'di-func-imageresizev4-dev'
 
-@description('The name of the  App Service plan.')
+@description('The name of the App Service plan.')
 param appServicePlanName string = 'di-asp-imageresizev4-dev'
 
-@description('The name of the  App Service plan.')
+@description('The images storage account name')
 param imagesStorageAccountName string
 
-@description('The name of the  App Service plan.')
+@description('The images storage account resource group name')
 param imagesStorageAccountResourceGroup string
+
+@description('The app insights instance name.')
+param applicationInsightsName string
+
+@description('The app insights instance resource group name.')
+param applicationInsightsResourceGroup string
 
 @description('Location for all resources.')
 param location string = resourceGroup().location
@@ -60,6 +66,11 @@ var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
 resource imagesStorageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
   name: imagesStorageAccountName
   scope: resourceGroup(imagesStorageAccountResourceGroup)
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: applicationInsightsName
+  scope: resourceGroup(applicationInsightsResourceGroup)
 }
 
 // #####################################################
@@ -114,6 +125,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'StorageConnection:Images'
           value: 'DefaultEndpointsProtocol=https;AccountName=${imagesStorageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${imagesStorageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: applicationInsights.properties.InstrumentationKey
         }
       ]
     }
