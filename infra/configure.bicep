@@ -8,7 +8,7 @@ Notes:
 - The application code must be deployed ahead of this configuration
 Azure CLI Commands:
 - az group create --name di-rg-imageresizev4-[env] --location uksouth
-- az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file configure.bicep --parameters @configure-params-stg.json
+- az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file configure.bicep --parameters @configure-params-[env].json
 */
 
 // #####################################################

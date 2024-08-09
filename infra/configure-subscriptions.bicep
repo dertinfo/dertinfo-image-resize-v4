@@ -30,9 +30,9 @@ var eventOriginalImagesSubscriptionName = 'di-evgs-event-originals'
 var sheetOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
 
 // Blob Paths for filtering events
-var groupOriginalImagesFilterPath = 'groupimages/blobs/originals-a/'
-var eventOriginalImagesFilterPath = 'eventimages/blobs/originals-a/'
-var sheetOriginalImagesFilterPath = 'sheetimages/blobs/originals-a/'
+var groupOriginalImagesFilterPath = 'groupimages/blobs/originals/'
+var eventOriginalImagesFilterPath = 'eventimages/blobs/originals/'
+var sheetOriginalImagesFilterPath = 'sheetimages/blobs/originals/'
 
 // #####################################################
 // References
