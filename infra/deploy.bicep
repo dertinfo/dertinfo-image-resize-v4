@@ -1,14 +1,14 @@
 /*
-Outline: This bicep file is used to deploy an azure function app with the specified app settings.
+Outline: This bicep file is used to deploy the base infrastructure to allow the function app to be deployed.
 Author: David Hall
-Date: 2024-08-08
+Created: 2024-08-08
 Notes: 
-- 
-Commands:
-
-Deploy the function app using the Azure CLI:
-az group create --name di-rg-imageresizev4-[env] --location uksouth
-az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy-function-app.bicep --parameters @deploy-function-app-params-[env].json
+- This deployment will create a storage account, app service plan and function app.
+- Run this so that the code can be deployed
+- Run configure.bicep once the code has been deployed. This will configure the event grid subscriptions.
+Azure CLI Commands:
+- az group create --name di-rg-imageresizev4-[env] --location uksouth
+- az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy-function-app.bicep --parameters @deploy-function-app-params-[env].json
 */
 
 // #####################################################
@@ -42,7 +42,7 @@ param location string = resourceGroup().location
   'stg'
   'prod'
 ])
-param deploymentType string = 'dev'
+param envTag string = 'dev'
 
 @description('Storage Account type')
 @allowed([
@@ -58,6 +58,8 @@ param storageAccountType string = 'Standard_LRS'
 
 // Determine the name of the storage account used by the function app.
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var functionAppStorageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+var imagesStorageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${imagesStorageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${imagesStorageAccount.listKeys().keys[0].value}'
 
 // #####################################################
 // References
@@ -89,7 +91,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     defaultToOAuthAuthentication: true
   }
   tags: {
-    environment: deploymentType
+    environment: envTag
   }
 }
 
@@ -116,7 +118,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          value: functionAppStorageConnectionString
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
@@ -124,7 +126,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           name: 'StorageConnection:Images'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${imagesStorageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${imagesStorageAccount.listKeys().keys[0].value}'
+          value: imagesStorageConnectionString
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -134,17 +136,12 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     }
   }
   tags: {
-    environment: deploymentType
+    environment: envTag
   }
 }
 
 // #####################################################
 // Modules
 // #####################################################
-
-
-
-
-
 
 

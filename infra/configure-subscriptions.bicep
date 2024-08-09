@@ -1,0 +1,142 @@
+// #####################################################
+// Parameters
+// #####################################################
+
+@description('The name of the storage account that we want to listen to.')
+param producerStorageAccountName string
+
+@description('Webhook endpoint for group images resize function.')
+param groupImageResizeWebhookEndpoint string 
+
+@description('Webhook endpoint for event images resize function.')
+param eventImageResizeWebhookEndpoint string 
+
+@description('Webhook endpoint for sheet images resize function.')
+param sheetImageResizeWebhookEndpoint string 
+
+@description('Webhook endpoint for sheet images resize function.')
+param location string = resourceGroup().location
+
+// #####################################################
+// Variables
+// #####################################################
+
+// System Topic Name
+var systemTopicName = '${producerStorageAccountName}-system-topic'
+
+// Subscription Names
+var groupOriginalImagesSubscriptionName = 'di-evgs-group-originals'
+var eventOriginalImagesSubscriptionName = 'di-evgs-event-originals'
+var sheetOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
+
+// Blob Paths for filtering events
+var groupOriginalImagesFilterPath = '/groupimages/originals-a/'
+var eventOriginalImagesFilterPath = '/eventimages/originals-a/'
+var sheetOriginalImagesFilterPath = '/sheetimages/originals-a/'
+
+// #####################################################
+// References
+// #####################################################
+
+resource producerStorageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
+  name: producerStorageAccountName
+}
+
+// #####################################################
+// Resources
+// #####################################################
+
+resource systemTopic 'Microsoft.EventGrid/systemTopics@2023-12-15-preview' = {
+  name: systemTopicName
+  location: location
+  properties: {
+    source: producerStorageAccount.id
+    topicType: 'Microsoft.Storage.StorageAccounts'
+  }
+}
+
+resource eventSubscriptionGroupImages 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
+  name: groupOriginalImagesSubscriptionName
+  parent: systemTopic
+  properties: {
+    destination: {
+      endpointType: 'WebHook'
+      properties: {
+        endpointUrl: groupImageResizeWebhookEndpoint
+      }
+    }
+    filter: {
+      includedEventTypes: [
+        'Microsoft.Storage.BlobCreated'
+      ]
+      advancedFilters: [
+        {
+          operatorType: 'StringBeginsWith'
+          key: 'subject'
+          values: [
+            '/blobServices/default/containers/${groupOriginalImagesFilterPath}'
+          ]
+        }
+      ]
+    }
+  }
+}
+
+resource eventSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
+  name: eventOriginalImagesSubscriptionName
+  parent: systemTopic
+  properties: {
+    destination: {
+      endpointType: 'WebHook'
+      properties: {
+        endpointUrl: eventImageResizeWebhookEndpoint
+      }
+    }
+    filter: {
+      includedEventTypes: [
+        'Microsoft.Storage.BlobCreated'
+      ]
+      advancedFilters: [
+        {
+          operatorType: 'StringBeginsWith'
+          key: 'subject'
+          values: [
+            '/blobServices/default/containers/${eventOriginalImagesFilterPath}'
+          ]
+        }
+      ]
+    }
+  }
+}
+
+resource sheetSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
+  name: sheetOriginalImagesSubscriptionName
+  parent: systemTopic
+  properties: {
+    destination: {
+      endpointType: 'WebHook'
+      properties: {
+        endpointUrl: sheetImageResizeWebhookEndpoint
+      }
+    }
+    filter: {
+      includedEventTypes: [
+        'Microsoft.Storage.BlobCreated'
+      ]
+      advancedFilters: [
+        {
+          operatorType: 'StringBeginsWith'
+          key: 'subject'
+          values: [
+            '/blobServices/default/containers/${sheetOriginalImagesFilterPath}'
+          ]
+        }
+      ]
+    }
+  }
+}
+
+// #####################################################
+// Modules
+// #####################################################
+

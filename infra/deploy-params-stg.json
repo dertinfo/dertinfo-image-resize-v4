@@ -8,7 +8,7 @@
     "appServicePlanName": {
       "value": "di-asp-imageresizev4-stg"
     },
-    "deploymentType": {
+    "envTag": {
       "value": "stg"
     },
     "imagesStorageAccountName": {
