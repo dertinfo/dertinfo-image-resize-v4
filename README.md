@@ -53,13 +53,24 @@ This project has a folder of /infra at the root of the repository that contains 
 For this at this time we are deploying manually from the Azure CLI. This can be done either from an Azure CLoud Shell or from a local install. 
 
 Use the following commands to setup the infrastucture for this project: 
+
+- env - values of stg,prod
+- tenantId - the id of the Azure tenant used to host the application
+- subsriptionId - the id of the Azure subscription that contains the resources.
+
 ```
-az login --tenant [Tenant Id]
-az account set --subscription [Subscription Id]
+az login --tenant [TenantId]
+az account set --subscription [SubscriptionId]
 az group create --name di-rg-imageresizev4-[env] --location uksouth
 az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy.bicep --parameters @deploy-params-[env].json
 ```
 
+There are 4 bicep files at this time that are manually deployed and need to be deployed in this order:
+
+- deploy.bicep - the main function app and plan
+- configure.bicep - storage account event grid system topic
+- automation.bicep - alert action and notification groups and automation logic apps
+- montoring.bicep - alerts that trigger automation actions.
 
 
 ## Running The Project

@@ -66,7 +66,7 @@ resource excessiveUseActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' ex
   scope: resourceGroup(excessiveUseActionGroupResourceGroup)
 }
 
-// Find the excessive use action group
+// Find the stop workload action group
 resource stopWorkloadActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' existing = {
   name: stopWorkloadActionGroupName
 }
@@ -149,7 +149,7 @@ resource actionRuleRequestThresholdReached 'Microsoft.Insights/metricAlerts@2018
     }
     actions: [
       {
-        actionGroupId: excessiveUseActionGroup.id
+        actionGroupId: stopWorkloadActionGroup.id
       }
     ]
     autoMitigate: true
