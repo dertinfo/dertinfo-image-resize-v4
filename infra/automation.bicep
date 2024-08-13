@@ -155,15 +155,36 @@ resource stopWorkloadLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
   }
 }
 
+@description('Create a custom role with the least privilage to allow stopping of the function app.')
+resource customRole 'Microsoft.Authorization/roleDefinitions@2022-05-01-preview' = {
+  name: guid(resourceGroup().id, 'CustomRoleStopFunctionApp')
+  properties: {
+    roleName: 'CustomRoleStopFunctionApp'
+    description: 'Custom role to allow stopping a function app'
+    permissions: [
+      {
+        actions: [
+          'Microsoft.Web/sites/stop/action'
+        ]
+        notActions: []
+      }
+    ]
+    assignableScopes: [
+      resourceGroup().id
+    ]
+  }
+}
+
+@description('Assign the custom role to the managed identity of the logic app.')
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(resourceGroup().id, stopWorkloadLogicApp.name, 'Contributor')
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor role
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', customRole.name)
     principalId: stopWorkloadLogicApp.identity.principalId
     principalType: 'ServicePrincipal'
-    scope: resourceGroup().id
   }
 }
+// note - from documentation this gets assigned at the deployment scope which in this instance is going to be the resource group.
 
 @description('Create the action group that will trigger the stop workload logic app.')
 resource stopWorkloadActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
