@@ -1,0 +1,72 @@
+# Trigger the pipeline on /src pushes to the main branch
+trigger:
+  branches:
+   include:
+     - main
+   paths:
+    include:
+      - infra/*
+
+# Do not trigger the pipeline on pull requests
+pr:
+  branches:
+    exclude:
+      - '*'
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+stages:
+- stage: 'DeployToTest'
+  displayName: 'Deploy Infrastucture To Test'
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Test
+    variables:
+    - group: DertInfoImageResizeV4_Infrastucture_VariablesGroup
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
+              location: 'uksouth'
+              resourceGroupName: 'di-rg-imageresizev4-stg'
+              csmFile: deploy/deploy.bicep
+              csmParametersFile: deploy/deploy-parameters-stg.json
+              overrideParameters: >
+                -environmentTag stg
+          
+
+- stage: 'DeployToLive'
+  displayName: 'Deploy API to Live'
+  dependsOn: DeployToTest
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Live
+    variables:
+    - group: DertInfoImageResizeV4_Infrastucture_VariablesGroup
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
+              location: 'uksouth'
+              resourceGroupName: 'di-rg-imageresizev4-prod'
+              csmFile: deploy/deploy.bicep
+              csmParametersFile: deploy/deploy-parameters-prod.json
+              overrideParameters: >
+                -environmentTag prod
