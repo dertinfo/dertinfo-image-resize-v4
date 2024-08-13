@@ -27,7 +27,7 @@ stages:
       vmImage: 'ubuntu-latest'
     environment: Test
     variables:
-    - group: DertInfoImageResizeV4_Infrastucture_VariablesGroup
+    - group: DertInfoImageResizeV4_Infrastucture_Staging_VariablesGroup
     strategy:
       runOnce:
         deploy:
@@ -36,14 +36,13 @@ stages:
             artifact: drop
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
-              location: 'uksouth'
-              resourceGroupName: 'di-rg-imageresizev4-stg'
-              csmFile: deploy/deploy.bicep
-              csmParametersFile: deploy/deploy-parameters-stg.json
+              connectedServiceName: '$(connectedServiceName)'
+              location: '$(location)'
+              resourceGroupName: '$(resourceGroupName)'
+              csmFile: '$(csmFile)'
+              csmParametersFile: '$(csmParametersFile)'
               overrideParameters: >
                 -environmentTag stg
-          
 
 - stage: 'DeployToLive'
   displayName: 'Deploy API to Live'
@@ -54,7 +53,7 @@ stages:
       vmImage: 'ubuntu-latest'
     environment: Live
     variables:
-    - group: DertInfoImageResizeV4_Infrastucture_VariablesGroup
+    - group: DertInfoImageResizeV4_Infrastucture_Production_VariablesGroup
     strategy:
       runOnce:
         deploy:
@@ -63,10 +62,10 @@ stages:
             artifact: drop
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
-              location: 'uksouth'
-              resourceGroupName: 'di-rg-imageresizev4-prod'
-              csmFile: deploy/deploy.bicep
-              csmParametersFile: deploy/deploy-parameters-prod.json
+              connectedServiceName: '$(connectedServiceName)'
+              location: '$(location)'
+              resourceGroupName: '$(resourceGroupName)'
+              csmFile: '$(csmFile)'
+              csmParametersFile: '$(csmParametersFile)'
               overrideParameters: >
                 -environmentTag prod
