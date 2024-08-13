@@ -5,11 +5,8 @@
         "functionAppName": {
             "value": "di-func-imageresizev4-prod"
         },
-        "imagesStorageAccountName": {
-            "value": "dertinfoliveimagessa"
-        },
-        "imagesStorageAccountResourceGroup": {
-            "value": "dertinfo-live-rg"
+        "stopWorkloadActionGroupName": {
+            "value": "di-agrp-stopworkload-prod"
         },
         "environmentTag": {
             "value": "prod"

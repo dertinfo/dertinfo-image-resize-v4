@@ -5,11 +5,8 @@
         "functionAppName": {
             "value": "di-func-imageresizev4-stg"
         },
-        "imagesStorageAccountName": {
-            "value": "dertinfotestimagessa"
-        },
-        "imagesStorageAccountResourceGroup": {
-            "value": "dertinfo-test-rg"
+        "stopWorkloadActionGroupName": {
+            "value": "di-agrp-stopworkload-stg"
         },
         "environmentTag": {
             "value": "stg"

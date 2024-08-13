@@ -2,6 +2,9 @@
 Outline: This bicep file is used to deploy the base infrastructure to allow the function app to be deployed.
 Author: David Hall
 Created: 2024-08-08
+Prerequisites:
+- The images storage account must be created before this is run.
+- The application insights instance must be created before this is run.
 Notes: 
 - This deployment will create a storage account, app service plan and function app.
 - Run this so that the code can be deployed
@@ -36,14 +39,6 @@ param applicationInsightsResourceGroup string
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
-@description('Deployment type for the resources. The environment that the resources are being deployed to.')
-@allowed([
-  'dev'
-  'stg'
-  'prod'
-])
-param envTag string = 'dev'
-
 @description('Storage Account type')
 @allowed([
   'Standard_LRS'
@@ -51,6 +46,14 @@ param envTag string = 'dev'
   'Standard_RAGRS'
 ])
 param storageAccountType string = 'Standard_LRS'
+
+@description('Environment tag for resources.')
+@allowed([
+  'dev'
+  'stg'
+  'prod'
+])
+param environmentTag string = 'dev'
 
 // #####################################################
 // Variables
@@ -82,6 +85,9 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: storageAccountName
   location: location
+  tags: {
+    environment: environmentTag
+  }
   sku: {
     name: storageAccountType
   }
@@ -90,14 +96,14 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     supportsHttpsTrafficOnly: true
     defaultToOAuthAuthentication: true
   }
-  tags: {
-    environment: envTag
-  }
 }
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: appServicePlanName
   location: location
+  tags: {
+    environment: environmentTag
+  }
   sku: {
     name: 'Y1'
     tier: 'Dynamic'
@@ -108,6 +114,9 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
 resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   name: functionAppName
   location: location
+  tags: {
+    environment: environmentTag
+  }
   kind: 'functionapp'
   identity: {
     type: 'SystemAssigned'
@@ -125,6 +134,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'dotnet-isolated'
         }
         {
+          name: 'WEBSITE_RUN_FROM_PACKAGE' // This ensures that the function app does note replace the code when deploying. 
+          value: '1'
+        }
+        {
           name: 'StorageConnection:Images'
           value: imagesStorageConnectionString
         }
@@ -134,9 +147,6 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         }
       ]
     }
-  }
-  tags: {
-    environment: envTag
   }
 }
 
