@@ -8,7 +8,7 @@
     "appServicePlanName": {
       "value": "di-asp-imageresizev4-prod"
     },
-    "envTag": {
+    "environmentTag": {
       "value": "prod"
     },
     "imagesStorageAccountName": {

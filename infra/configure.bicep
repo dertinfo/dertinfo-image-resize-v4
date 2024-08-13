@@ -2,6 +2,8 @@
 Outline: This bicep file is used to setup system topic for event grid and the event grid subscriptions.
 Author: David Hall
 Created: 2024-08-09
+Prerequisites:
+- deploy.bicep must be run before this is run. This ensures function app is present. (As we need the key for the blobs_extension)
 Notes: 
 - This deployment will create a system topic and 3 event grid subscriptions.
 - It will need to validate the web hook endpoints as part of the deployment

@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "value": "di-func-imageresizev4-prod"
+        },
+        "stopWorkloadActionGroupName": {
+            "value": "di-agrp-stopworkload-stg"
+        },
+        "excessiveUseActionGroupName": {
+            "value": "di-agrp-excessiveuse-prod"
+        },
+        "excessiveUseActionGroupResourceGroup": {
+            "value": "di-rg-monitoring-prod"
+        },
+        "thresholdForRequestsPer5mins": {
+            "value": 100
+        }
+    }
+}
