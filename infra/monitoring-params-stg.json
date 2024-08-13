@@ -14,8 +14,11 @@
         "excessiveUseActionGroupResourceGroup": {
             "value": "di-rg-monitoring-stg"
         },
-        "thresholdForRequestsPer5mins": {
+        "warningThresholdForRequestsPer5mins": {
             "value": 10
+        },
+        "actionThresholdForRequestsPerDay": {
+            "value": 20000
         },
         "environmentTag": {
             "value": "stg"

@@ -134,6 +134,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'dotnet-isolated'
         }
         {
+          name: 'WEBSITE_RUN_FROM_PACKAGE' // This ensures that the function app does note replace the code when deploying. 
+          value: '1'
+        }
+        {
           name: 'StorageConnection:Images'
           value: imagesStorageConnectionString
         }
