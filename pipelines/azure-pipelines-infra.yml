@@ -12,13 +12,23 @@ pr:
   branches:
     exclude:
       - '*'
-
-
 pool:
   vmImage: 'ubuntu-latest'
 
-
 stages:
+- stage: 'BuildArtefact'
+  displayName: 'Move IaC files to drop'
+  jobs:
+    - job: 'CopyIaC'
+      displayName: 'Copy he IaC from Source into artefact to support redeployment'
+      steps:
+        - task: PublishPipelineArtifact@1
+          displayName: 'PublishInfrastiuctureAsCode'
+          inputs:
+            targetPath: 'infra'
+            artifact: 'iac'
+          
+  
 - stage: 'DeployToTest'
   displayName: 'Deploy Infrastucture To Test'
   jobs:
@@ -33,7 +43,7 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: drop
+            artifact: iac
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
@@ -59,7 +69,7 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: drop
+            artifact: iac
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
