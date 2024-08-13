@@ -17,6 +17,14 @@ param sheetImageResizeWebhookEndpoint string
 @description('Webhook endpoint for sheet images resize function.')
 param location string = resourceGroup().location
 
+@description('Envionment tag for resources.')
+@allowed([
+  'dev'
+  'stg'
+  'prod'
+])
+param environmentTag string = 'dev'
+
 // #####################################################
 // Variables
 // #####################################################
@@ -49,6 +57,9 @@ resource producerStorageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' e
 resource systemTopic 'Microsoft.EventGrid/systemTopics@2023-12-15-preview' = {
   name: systemTopicName
   location: location
+  tags: {
+    environment: environmentTag
+  }
   properties: {
     source: producerStorageAccount.id
     topicType: 'Microsoft.Storage.StorageAccounts'

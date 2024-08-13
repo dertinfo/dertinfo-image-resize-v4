@@ -16,6 +16,9 @@
         },
         "thresholdForRequestsPer5mins": {
             "value": 10
+        },
+        "environmentTag": {
+            "value": "stg"
         }
     }
 }

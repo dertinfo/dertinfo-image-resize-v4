@@ -10,6 +10,9 @@
         },
         "imagesStorageAccountResourceGroup": {
             "value": "dertinfo-live-rg"
+        },
+        "environmentTag": {
+            "value": "prod"
         }
     }
 }
