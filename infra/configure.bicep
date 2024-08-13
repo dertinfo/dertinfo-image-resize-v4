@@ -26,6 +26,14 @@ param imagesStorageAccountName string
 @description('The images storage account resource group name')
 param imagesStorageAccountResourceGroup string
 
+@description('Environment tag for resources.')
+@allowed([
+  'dev'
+  'stg'
+  'prod'
+])
+param environmentTag string = 'dev'
+
 // #####################################################
 // Variables
 // #####################################################
@@ -68,6 +76,7 @@ module eventGridSubscriptionsModule './configure-subscriptions.bicep' = {
     groupImageResizeWebhookEndpoint: groupImageResizeWebhookEndpoint
     eventImageResizeWebhookEndpoint: eventImageResizeWebhookEndpoint
     sheetImageResizeWebhookEndpoint: sheetImageResizeWebhookEndpoint
+    environmentTag: environmentTag
   }
 }
 
