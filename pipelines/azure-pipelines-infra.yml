@@ -3,9 +3,9 @@ trigger:
   branches:
    include:
      - main
-   paths:
+  paths:
     include:
-      - infra/*
+      - src
 
 # Do not trigger the pipeline on pull requests
 pr:
@@ -36,7 +36,7 @@ stages:
             artifact: drop
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '$(connectedServiceName)'
+              connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
               location: '$(location)'
               resourceGroupName: '$(resourceGroupName)'
               csmFile: '$(csmFile)'
@@ -62,7 +62,7 @@ stages:
             artifact: drop
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '$(connectedServiceName)'
+              connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
               location: '$(location)'
               resourceGroupName: '$(resourceGroupName)'
               csmFile: '$(csmFile)'
