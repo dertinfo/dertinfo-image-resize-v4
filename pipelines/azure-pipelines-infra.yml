@@ -17,10 +17,10 @@ pool:
 
 stages:
 - stage: 'BuildArtefact'
-  displayName: 'Move IaC files to drop'
+  displayName: 'Create Artefact IaC'
   jobs:
     - job: 'CopyIaC'
-      displayName: 'Copy he IaC from Source into artefact to support redeployment'
+      displayName: 'Copy the IaC files frim "infra" to "iac"'
       steps:
         - task: PublishPipelineArtifact@1
           displayName: 'PublishInfrastiuctureAsCode'
@@ -61,8 +61,8 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: 'deploy.bicep'
-              csmParametersFile: 'deploy-params-stg.json'
+              csmFile: 'infra/deploy.bicep'
+              csmParametersFile: 'infra/deploy-params-stg.json'
               overrideParameters: '-environmentTag stg'
               deploymentMode: 'Incremental'
 
