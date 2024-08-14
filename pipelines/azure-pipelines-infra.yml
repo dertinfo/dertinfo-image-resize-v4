@@ -49,8 +49,8 @@ stages:
               connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
               location: '$(location)'
               resourceGroupName: '$(resourceGroupName)'
-              csmFile: '$(csmFile)'
-              csmParametersFile: '$(csmParametersFile)'
+              csmFile: 'deploy.bicep'
+              csmParametersFile: 'deploy-params-stg.json'
               overrideParameters: >
                 -environmentTag stg
 
