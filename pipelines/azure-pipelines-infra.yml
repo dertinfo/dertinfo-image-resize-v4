@@ -51,8 +51,13 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: iac
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'iac'
+              downloadPath: '$(System.ArtifactsDirectory)'
+              cleanDestinationFolder: true
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               deploymentScope: 'Resource Group'
@@ -61,8 +66,8 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: 'infra/deploy.bicep'
-              csmParametersFile: 'infra/deploy-params-stg.json'
+              csmFile: '$(System.ArtifactsDirectory)/iac/deploy.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/iac/deploy-params-stg.json'
               overrideParameters: '-environmentTag stg'
               deploymentMode: 'Incremental'
 
