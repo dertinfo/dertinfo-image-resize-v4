@@ -34,7 +34,7 @@ stages:
     displayName: Lint code
     steps:
       - script: |
-          az bicep build --file deploy/deploy.bicep
+          az bicep build --file deploy.bicep
         name: LintBicepCode
         displayName: Run Bicep linter             
   
