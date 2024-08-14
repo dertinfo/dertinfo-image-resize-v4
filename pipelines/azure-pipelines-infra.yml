@@ -46,13 +46,15 @@ stages:
             artifact: iac
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
-              location: '$(location)'
+              deploymentScope: 'Resource Group'
+              action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
               csmFile: 'deploy.bicep'
               csmParametersFile: 'deploy-params-stg.json'
-              overrideParameters: >
-                -environmentTag stg
+              overrideParameters: '-environmentTag stg'
+              deploymentMode: 'Incremental'
 
 - stage: 'DeployToLive'
   displayName: 'Deploy API to Live'
