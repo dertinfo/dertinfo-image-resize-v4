@@ -52,8 +52,8 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: 'deploy.bicep'
-              csmParametersFile: 'deploy-params-stg.json'
+              csmFile: 'iac/deploy.bicep'
+              csmParametersFile: 'iac/deploy-params-stg.json'
               overrideParameters: '-environmentTag stg'
               deploymentMode: 'Incremental'
 
