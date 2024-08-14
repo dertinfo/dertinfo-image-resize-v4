@@ -27,7 +27,16 @@ stages:
           inputs:
             targetPath: 'infra'
             artifact: 'iac'
-          
+
+- stage: Lint
+  jobs:
+  - job: LintCode
+    displayName: Lint code
+    steps:
+      - script: |
+          az bicep build --file deploy/deploy.bicep
+        name: LintBicepCode
+        displayName: Run Bicep linter             
   
 - stage: 'DeployToTest'
   displayName: 'Deploy Infrastucture To Test'
@@ -52,8 +61,8 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: 'iac/deploy.bicep'
-              csmParametersFile: 'iac/deploy-params-stg.json'
+              csmFile: 'deploy.bicep'
+              csmParametersFile: 'deploy-params-stg.json'
               overrideParameters: '-environmentTag stg'
               deploymentMode: 'Incremental'
 
