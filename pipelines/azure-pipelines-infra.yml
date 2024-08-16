@@ -94,10 +94,13 @@ stages:
               cleanDestinationFolder: true
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
-              location: '$(location)'
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
+              action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
-              csmFile: '$(System.ArtifactsDirectory)/deploy.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/deploy-params-prod.json'
-              overrideParameters: >
-                -environmentTag prod
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: '$(System.ArtifactsDirectory)/main.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-prod.json'
+              overrideParameters: '-environmentTag prod'
+              deploymentMode: 'Incremental'
