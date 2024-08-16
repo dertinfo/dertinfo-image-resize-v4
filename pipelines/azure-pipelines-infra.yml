@@ -111,6 +111,9 @@ stages:
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
               overrideParameters: |
                 -functionAppName $(functionAppName)
+                -imagesStorageAccountName ${imagesStorageAccountName}
+                -imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}
+                -environmentTag ${environmentTag}
               deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
