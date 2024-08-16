@@ -66,9 +66,18 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-stg.json'
-              overrideParameters: '-environmentTag stg'
+              overrideParameters: |
+                '-ownerInitials ${ownerInitials}' 
+                '-workloadName ${ownerInitials}'
+                '-location ${location}'
+                '-resourceGroupName ${resourceGroupName}'
+                '-imagesStorageAccountName ${imagesStorageAccountName}'
+                '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
+                '-applicationInsightsName ${applicationInsightsName}'
+                '-applicationInsightsResourceGroupName ${applicationInsightsResourceGroupName}'
+                '-excessiveUseActionGroupName ${excessiveUseActionGroupName}'
+                '-excessiveUseActionGroupResourceGroup ${excessiveUseActionGroupResourceGroup}'
+                '-environmentTag stg'
               deploymentMode: 'Incremental'
           - task: AzureCLI@2
             displayName: 'Get the name of the created function app'
@@ -91,8 +100,18 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
-              overrideParameters: '-environmentTag stg'
+              overrideParameters: |
+                '-ownerInitials ${ownerInitials}' 
+                '-workloadName ${ownerInitials}'
+                '-location ${location}'
+                '-resourceGroupName ${resourceGroupName}'
+                '-imagesStorageAccountName ${imagesStorageAccountName}'
+                '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
+                '-applicationInsightsName ${applicationInsightsName}'
+                '-applicationInsightsResourceGroupName ${applicationInsightsResourceGroupName}'
+                '-excessiveUseActionGroupName ${excessiveUseActionGroupName}'
+                '-excessiveUseActionGroupResourceGroup ${excessiveUseActionGroupResourceGroup}'
+                '-environmentTag stg'
               deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
@@ -119,12 +138,48 @@ stages:
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
+              azureResourceManagerConnection: 'Visual Studio Professional Subscription - Infrastructure'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
-              csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-prod.json'
-              overrideParameters: '-environmentTag prod'
+              overrideParameters: |
+                '-ownerInitials ${ownerInitials}' 
+                '-workloadName ${ownerInitials}'
+                '-location ${location}'
+                '-resourceGroupName ${resourceGroupName}'
+                '-imagesStorageAccountName ${imagesStorageAccountName}'
+                '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
+                '-applicationInsightsName ${applicationInsightsName}'
+                '-applicationInsightsResourceGroupName ${applicationInsightsResourceGroupName}'
+                '-excessiveUseActionGroupName ${excessiveUseActionGroupName}'
+                '-excessiveUseActionGroupResourceGroup ${excessiveUseActionGroupResourceGroup}'
+                '-environmentTag ${environmentTag}'
+              deploymentMode: 'Incremental'
+          - task: AzureCLI@2
+            displayName: 'Get the name of the created function app'
+            inputs:
+              azureSubscription: 'Visual Studio Professional Subscription - Infrastructure'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                functionAppName=$(az functionapp list --resource-group $(resourceGroupName) --query "[0].name" -o tsv)
+                echo "##vso[task.setvariable variable=functionAppName]$functionAppName"
+          - script: |
+              echo "Function App Name: $(functionAppName)"
+            displayName: 'Display Function App Name'
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: 'Visual Studio Professional Subscription - Infrastructure'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
+              overrideParameters: |
+                '-functionAppName $(functionAppName)' 
+                '-imagesStorageAccountName ${imagesStorageAccountName}'
+                '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
+                '-environmentTag ${environmentTag}'
               deploymentMode: 'Incremental'
