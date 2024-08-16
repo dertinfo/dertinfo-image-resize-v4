@@ -76,16 +76,6 @@ stages:
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-stg.json'
-              overrideParameters: |
-                -ownerInitials $(ownerInitials)
-                -workloadName $(ownerInitials)
-                -imagesStorageAccountName $(imagesStorageAccountName)
-                -imagesStorageAccountResourceGroupName $(imagesStorageAccountResourceGroupName)
-                -applicationInsightsName $(applicationInsightsName)
-                -applicationInsightsResourceGroupName $(applicationInsightsResourceGroupName)
-                -excessiveUseActionGroupName $(excessiveUseActionGroupName)
-                -excessiveUseActionGroupResourceGroup $({{)excessiveUseActionGroupResourceGroup)
-                -environmentTag $(environmentTag)
               deploymentMode: 'Incremental'
           - task: AzureCLI@2
             displayName: 'Get the name of the created function app'
@@ -109,11 +99,8 @@ stages:
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
-              overrideParameters: >-
+              overrideParameters: |
                 -functionAppName $(functionAppName)
-                -imagesStorageAccountName $(imagesStorageAccountName)
-                -imagesStorageAccountResourceGroupName $(imagesStorageAccountResourceGroupName)
-                -environmentTag $(environmentTag)
               deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
@@ -147,16 +134,6 @@ stages:
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-prod.json'
-              overrideParameters: |
-                -ownerInitials $(ownerInitials)
-                -workloadName $(ownerInitials)
-                -imagesStorageAccountName $(imagesStorageAccountName)
-                -imagesStorageAccountResourceGroupName $(imagesStorageAccountResourceGroupName)
-                -applicationInsightsName $(applicationInsightsName)
-                -applicationInsightsResourceGroupName $(applicationInsightsResourceGroupName)
-                -excessiveUseActionGroupName $(excessiveUseActionGroupName)
-                -excessiveUseActionGroupResourceGroup $({{)excessiveUseActionGroupResourceGroup)
-                -environmentTag $(environmentTag)
               deploymentMode: 'Incremental'
           - task: AzureCLI@2
             displayName: 'Get the name of the created function app'
@@ -182,7 +159,4 @@ stages:
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
               overrideParameters: |
                 -functionAppName $(functionAppName)
-                -imagesStorageAccountName $(imagesStorageAccountName)
-                -imagesStorageAccountResourceGroupName $(imagesStorageAccountResourceGroupName)
-                -environmentTag $(environmentTag)
               deploymentMode: 'Incremental'
