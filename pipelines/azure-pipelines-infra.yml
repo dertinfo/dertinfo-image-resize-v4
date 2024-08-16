@@ -66,6 +66,7 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
+              csmFile: '$(System.ArtifactsDirectory)/main.bicep'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -101,17 +102,10 @@ stages:
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
               overrideParameters: |
-                '-ownerInitials ${ownerInitials}' 
-                '-workloadName ${ownerInitials}'
-                '-location ${location}'
-                '-resourceGroupName ${resourceGroupName}'
+                '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
                 '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
-                '-applicationInsightsName ${applicationInsightsName}'
-                '-applicationInsightsResourceGroupName ${applicationInsightsResourceGroupName}'
-                '-excessiveUseActionGroupName ${excessiveUseActionGroupName}'
-                '-excessiveUseActionGroupResourceGroup ${excessiveUseActionGroupResourceGroup}'
-                '-environmentTag stg'
+                '-environmentTag ${environmentTag}'
               deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
@@ -143,6 +137,7 @@ stages:
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
               templateLocation: 'Linked artifact'
+              csmFile: '$(System.ArtifactsDirectory)/main.bicep'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
