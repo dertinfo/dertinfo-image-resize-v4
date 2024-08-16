@@ -5,7 +5,7 @@ trigger:
      - main
   paths:
     include:
-      - src
+      - infra
 
 # Do not trigger the pipeline on pull requests
 pr:
@@ -85,14 +85,19 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: iac
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'iac'
+              downloadPath: '$(System.ArtifactsDirectory)'
+              cleanDestinationFolder: true
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               connectedServiceName: '(JUL2024) DertInfo Subscription (e9f1da4f-d34f-4e93-b7c9-75d375a60253)'
               location: '$(location)'
               resourceGroupName: '$(resourceGroupName)'
-              csmFile: '$(csmFile)'
-              csmParametersFile: '$(csmParametersFile)'
+              csmFile: '$(System.ArtifactsDirectory)/deploy.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/deploy-params-prod.json'
               overrideParameters: >
                 -environmentTag prod
