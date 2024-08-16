@@ -24,9 +24,11 @@ namespace DertInfo.ImageResize
             _logger.LogInformation($"Resize {ImageFolder} - Processed blob: {name}");
 
             // Create the target streams for the resized images.
+            using var stream100x100 = new MemoryStream();
             using var stream480x360 = new MemoryStream();
 
             // Resize the images into the new streams
+            await _imageResizeService.ResizeImageAsync(inputBlob, name, "100x100", stream100x100);
             await _imageResizeService.ResizeImageAsync(inputBlob, name, "480x360", stream480x360, true);
 
             // Write the copy to the 100x100 blobs.
