@@ -1,35 +1,15 @@
-/*
-Outline: Constucts to Action Group fo stopping the workload
-Author: David Hall
-Created: 2024-08-12
-Prerequisites:
-- Function app must be deployed.
-Notes: 
-- This deployment will create:
-- A connection to the ARM API
-- A logic app that will call the ARM API to stop the function app
-- A action group that will trigger the logic app
-Azure CLI Commands:
-- az group create --name di-rg-imageresizev4-[env] --location uksouth
-- az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file automation.bicep --parameters @automation-params-[env].json
-Extra
-- If you are ever doing this again ensure that you keep the @{encodeURIComponent(\'${subscription().subscriptionId}\') in the invoke resource paths.
-  It is required to ensure that the path is correctly formatted. If you are stil having problems validate the Json output between a portal constucted logic App & Conenction
-  with the bicep deployed one and look at the differences. 
-*/
-
 // #####################################################
 // Parameters
 // #####################################################
 
 @description('The name of the function app that we are monitoring.')
-param functionAppName string = 'di-func-imageresizev4-dev'
+param functionAppName string
 
 @description('The name of the logic app for stopping the workload')
-param logicAppName string = 'di-logic-stopworkload-stg'
+param logicAppName string
 
 @description('The name of the stop workload action group.')
-param stopWorkloadActionGroupName string = 'di-agrp-stopworkload-stg'
+param stopWorkloadActionGroupName string
 
 @description('Environment tag for resources.')
 @allowed([
@@ -45,23 +25,17 @@ param environmentTag string = 'dev'
 
 var armConnectionName = '${logicAppName}-arm-connection'
 var azureManagedConnectorResourceId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${resourceGroup().location}/managedApis/arm'
-var functionAppPath = 'sites/${functionApp.name}'
+var functionAppPath = 'sites/${functionAppName}'
 var functionAppOperation = 'stop'
 
 // #####################################################
 // References
 // #####################################################
 
-// Find the function app
-resource functionApp 'Microsoft.Web/sites@2021-03-01' existing = {
-  name: functionAppName
-}
-
 // #####################################################
 // Resources
 // #####################################################
 
-@description('Build the ARM connection for the logic app.')
 resource armConnection 'Microsoft.Web/connections@2018-07-01-preview' = {
   name: armConnectionName
   location: resourceGroup().location
@@ -86,7 +60,6 @@ resource armConnection 'Microsoft.Web/connections@2018-07-01-preview' = {
 //         The V2 kind is for multi-authentication logic apps.  
 //         Using @2018-07-01-preview as reduces warnings. 
 
-@description('Create the logic app that will trigger the stop workload action on the function app.')
 resource stopWorkloadLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: resourceGroup().location
@@ -155,9 +128,8 @@ resource stopWorkloadLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
   }
 }
 
-@description('Create a custom role with the least privilage to allow stopping of the function app.')
 resource customRole 'Microsoft.Authorization/roleDefinitions@2022-05-01-preview' = {
-  name: guid(resourceGroup().id, 'CustomRoleStopFunctionApp')
+  name: guid(resourceGroup().id, stopWorkloadLogicApp.name, 'FunctionStopRole')
   properties: {
     roleName: 'CustomRoleStopFunctionApp'
     description: 'Custom role to allow stopping a function app'
@@ -175,9 +147,8 @@ resource customRole 'Microsoft.Authorization/roleDefinitions@2022-05-01-preview'
   }
 }
 
-@description('Assign the custom role to the managed identity of the logic app.')
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, stopWorkloadLogicApp.name, 'Contributor')
+  name: guid(resourceGroup().id, stopWorkloadLogicApp.name, 'FunctionStopRoleAssignement')
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', customRole.name)
     principalId: stopWorkloadLogicApp.identity.principalId
@@ -186,7 +157,6 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
 }
 // note - from documentation this gets assigned at the deployment scope which in this instance is going to be the resource group.
 
-@description('Create the action group that will trigger the stop workload logic app.')
 resource stopWorkloadActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
   name: stopWorkloadActionGroupName
   location: 'global'
@@ -215,3 +185,5 @@ resource stopWorkloadActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = 
 // #####################################################
 // Outputs
 // #####################################################
+
+output stopWorkloadActionGroupName string = stopWorkloadActionGroup.name

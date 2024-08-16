@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "functionAppName": {
-            "value": "di-func-imageresizev4-prod"
+            "value": "di-XXXX-func-imageresizev4-prod"
         },
         "imagesStorageAccountName": {
             "value": "dertinfoliveimagessa"

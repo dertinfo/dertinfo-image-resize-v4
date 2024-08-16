@@ -3,10 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "functionAppName": {
-            "value": "di-func-imageresizev4-stg"
+            "value": "di-7olt-func-imageresizev4-stg"
         },
-        "stopWorkloadActionGroupName": {
-            "value": "di-agrp-stopworkload-stg"
+        "imagesStorageAccountName": {
+            "value": "dertinfotestimagessa"
+        },
+        "imagesStorageAccountResourceGroup": {
+            "value": "dertinfo-test-rg"
         },
         "environmentTag": {
             "value": "stg"
