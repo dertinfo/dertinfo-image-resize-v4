@@ -39,13 +39,13 @@ var systemTopicName = '${producerStorageAccountName}-system-topic'
 var groupOriginalImagesSubscriptionName = 'di-evgs-group-originals'
 var eventOriginalImagesSubscriptionName = 'di-evgs-event-originals'
 var sheetOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
-var defaultOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
+var defaultOriginalImagesSubscriptionName = 'di-evgs-default-originals'
 
 // Blob Paths for filtering events
 var groupOriginalImagesFilterPath = 'groupimages/blobs/originals/'
 var eventOriginalImagesFilterPath = 'eventimages/blobs/originals/'
 var sheetOriginalImagesFilterPath = 'sheetimages/blobs/originals/'
-var defaultOriginalImagesFilterPath = 'sheetimages/blobs/originals/'
+var defaultOriginalImagesFilterPath = 'defaultimages/blobs/originals/'
 
 // #####################################################
 // References
