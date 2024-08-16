@@ -14,6 +14,9 @@ param eventImageResizeWebhookEndpoint string
 @description('Webhook endpoint for sheet images resize function.')
 param sheetImageResizeWebhookEndpoint string 
 
+@description('Webhook endpoint for default images resize function.')
+param defaultImageResizeWebhookEndpoint string 
+
 @description('Webhook endpoint for sheet images resize function.')
 param location string = resourceGroup().location
 
@@ -36,11 +39,13 @@ var systemTopicName = '${producerStorageAccountName}-system-topic'
 var groupOriginalImagesSubscriptionName = 'di-evgs-group-originals'
 var eventOriginalImagesSubscriptionName = 'di-evgs-event-originals'
 var sheetOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
+var defaultOriginalImagesSubscriptionName = 'di-evgs-sheet-originals'
 
 // Blob Paths for filtering events
 var groupOriginalImagesFilterPath = 'groupimages/blobs/originals/'
 var eventOriginalImagesFilterPath = 'eventimages/blobs/originals/'
 var sheetOriginalImagesFilterPath = 'sheetimages/blobs/originals/'
+var defaultOriginalImagesFilterPath = 'sheetimages/blobs/originals/'
 
 // #####################################################
 // References
@@ -119,6 +124,25 @@ resource sheetSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSub
         'Microsoft.Storage.BlobCreated'
       ]
       subjectBeginsWith: '/blobServices/default/containers/${sheetOriginalImagesFilterPath}'
+    }
+  }
+}
+
+resource defaultSubscriptionSheetImages 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
+  name: defaultOriginalImagesSubscriptionName
+  parent: systemTopic
+  properties: {
+    destination: {
+      endpointType: 'WebHook'
+      properties: {
+        endpointUrl: defaultImageResizeWebhookEndpoint
+      }
+    }
+    filter: {
+      includedEventTypes: [
+        'Microsoft.Storage.BlobCreated'
+      ]
+      subjectBeginsWith: '/blobServices/default/containers/${defaultOriginalImagesFilterPath}'
     }
   }
 }

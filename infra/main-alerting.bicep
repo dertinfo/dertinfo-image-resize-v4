@@ -48,7 +48,7 @@ module excessRequestsRuleModule './main-alerting-rule-excessrequests.bicep' = {
     functionAppName: functionAppName
     excessiveUseActionGroupName: excessiveUseActionGroupName
     excessiveUseActionGroupResourceGroup: excessiveUseActionGroupResourceGroup
-    warningThresholdForRequestsPer5mins: (environmentTag == 'prod') ? 100 : 10 
+    warningThresholdForRequestsPer5mins: (environmentTag == 'prod') ? 100 : 30 
     environmentTag: environmentTag
   }
 }
