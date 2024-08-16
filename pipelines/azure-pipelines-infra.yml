@@ -1,3 +1,11 @@
+# Description
+# This pipeline is responsible for deploying the infrastructure for the ImageResizeV4 function app
+# Important
+# In order to run this pipeline the Service Connection for Azure DevOps must be created with permission for:
+# - Both resource groups containing both deployment resource group and the resource group where the image storage account is located. (Or Subscription)
+# - It must be able to created resources for the resource group
+# - It must be able to deploy a customRole and roleAssignment
+
 # Trigger the pipeline on /src pushes to the main branch
 trigger:
   branches:
@@ -67,7 +75,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.json'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-stg.json'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -102,7 +110,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.json'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
@@ -140,7 +148,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.json'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-prod.json'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -175,7 +183,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.json'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
