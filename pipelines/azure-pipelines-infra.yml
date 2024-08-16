@@ -70,9 +70,33 @@ stages:
               csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-stg.json'
               overrideParameters: '-environmentTag stg'
               deploymentMode: 'Incremental'
+          - task: AzureCLI@2
+            displayName: 'Get the name of the created function app'
+            inputs:
+              azureSubscription: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                functionAppName=$(az functionapp list --resource-group $(resourceGroupName) --query "[0].name" -o tsv)
+                echo "##vso[task.setvariable variable=functionAppName]$functionAppName"
+          - script: |
+              echo "Function App Name: $(functionAppName)"
+            displayName: 'Display Function App Name'
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '(JUL2024) Visual Studio Professional Subscription (9ee4f83c-a9a6-41a0-822d-13e18dc6c648)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
+              overrideParameters: '-environmentTag stg'
+              deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
-  displayName: 'Deploy API to Live'
+  displayName: 'Deploy Infrastucture To Test'
   dependsOn: DeployToTest
   jobs:
   - deployment: Deploy
