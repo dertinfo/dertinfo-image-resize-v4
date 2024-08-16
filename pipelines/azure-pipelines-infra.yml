@@ -67,6 +67,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/paramters-main-${environmentTag}.bicep'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -78,7 +79,7 @@ stages:
                 '-applicationInsightsResourceGroupName ${applicationInsightsResourceGroupName}'
                 '-excessiveUseActionGroupName ${excessiveUseActionGroupName}'
                 '-excessiveUseActionGroupResourceGroup ${excessiveUseActionGroupResourceGroup}'
-                '-environmentTag stg'
+                '-environmentTag ${environmentTag}'
               deploymentMode: 'Incremental'
           - task: AzureCLI@2
             displayName: 'Get the name of the created function app'
@@ -101,6 +102,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/paramters-comms-${environmentTag}.bicep'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
@@ -138,6 +140,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/paramters-main-${environmentTag}.bicep'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -172,6 +175,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/paramters-comms-${environmentTag}.bicep'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
