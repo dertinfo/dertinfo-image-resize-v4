@@ -67,7 +67,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.json'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -102,7 +102,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.json'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
@@ -140,7 +140,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/main.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-main-${environmentTag}.json'
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
@@ -175,7 +175,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.bicep'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-${environmentTag}.json'
               overrideParameters: |
                 '-functionAppName $(functionAppName)' 
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
