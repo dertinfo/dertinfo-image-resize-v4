@@ -32,6 +32,7 @@ namespace DertInfo.ImageResize
             await _imageResizeService.ResizeImageAsync(inputBlob, name, "480x360", stream480x360, true);
 
             // Write the copy to the 100x100 blobs.
+            await _blobWriter.WriteBlobStream(stream100x100, ImageFolder, $"100x100/{name}");
             await _blobWriter.WriteBlobStream(stream480x360, ImageFolder, $"480x360/{name}");
         }
     }
