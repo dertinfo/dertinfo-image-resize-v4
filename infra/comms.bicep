@@ -44,9 +44,11 @@ var blobExtensionKey = systemKeys.blobs_extension // We want the key with the na
 var groupFunctionName = 'ResizeGroupImages'
 var eventFunctionName = 'ResizeEventImages'
 var sheetFunctionName = 'ResizeSheetImages'
+var defaultFunctionName = 'ResizeDefaultImages'
 var groupImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${groupFunctionName}&code=${blobExtensionKey}'
 var eventImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${eventFunctionName}&code=${blobExtensionKey}'
 var sheetImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${sheetFunctionName}&code=${blobExtensionKey}'
+var defaultImageResizeWebhookEndpoint = 'https://${functionAppName}.azurewebsites.net/runtime/webhooks/blobs?functionName=Host.Functions.${defaultFunctionName}&code=${blobExtensionKey}'
 
 // #####################################################
 // References
@@ -77,6 +79,7 @@ module eventGridSubscriptionsModule './comms-imagesubs.bicep' = {
     groupImageResizeWebhookEndpoint: groupImageResizeWebhookEndpoint
     eventImageResizeWebhookEndpoint: eventImageResizeWebhookEndpoint
     sheetImageResizeWebhookEndpoint: sheetImageResizeWebhookEndpoint
+    defaultImageResizeWebhookEndpoint: defaultImageResizeWebhookEndpoint
     environmentTag: environmentTag
   }
 }
