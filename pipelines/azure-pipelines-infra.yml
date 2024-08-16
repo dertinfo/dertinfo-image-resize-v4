@@ -61,7 +61,7 @@ stages:
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'ImageResizeV4 ADO Service Connection'
+              azureResourceManagerConnection: 'Visual Studio Professional Subscription - Infrastructure'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
@@ -73,7 +73,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Get the name of the created function app'
             inputs:
-              azureSubscription: 'ImageResizeV4 ADO Service Connection'
+              azureSubscription: 'Visual Studio Professional Subscription - Infrastructure'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -85,7 +85,7 @@ stages:
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'ImageResizeV4 ADO Service Connection'
+              azureResourceManagerConnection: 'Visual Studio Professional Subscription - Infrastructure'
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(resourceGroupName)'
               location: '$(location)'
