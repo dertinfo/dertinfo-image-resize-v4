@@ -79,8 +79,6 @@ stages:
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
-                '-location ${location}'
-                '-resourceGroupName ${resourceGroupName}'
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
                 '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
                 '-applicationInsightsName ${applicationInsightsName}'
@@ -152,8 +150,6 @@ stages:
               overrideParameters: |
                 '-ownerInitials ${ownerInitials}' 
                 '-workloadName ${ownerInitials}'
-                '-location ${location}'
-                '-resourceGroupName ${resourceGroupName}'
                 '-imagesStorageAccountName ${imagesStorageAccountName}'
                 '-imagesStorageAccountResourceGroupName ${imagesStorageAccountResourceGroupName}'
                 '-applicationInsightsName ${applicationInsightsName}'

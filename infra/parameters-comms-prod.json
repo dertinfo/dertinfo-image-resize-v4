@@ -8,7 +8,7 @@
         "imagesStorageAccountName": {
             "value": "dertinfoliveimagessa"
         },
-        "imagesStorageAccountResourceGroup": {
+        "imagesStorageAccountResourceGroupName": {
             "value": "dertinfo-live-rg"
         },
         "environmentTag": {

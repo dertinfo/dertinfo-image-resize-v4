@@ -8,7 +8,7 @@
         "imagesStorageAccountName": {
             "value": "dertinfotestimagessa"
         },
-        "imagesStorageAccountResourceGroup": {
+        "imagesStorageAccountResourceGroupName": {
             "value": "dertinfo-test-rg"
         },
         "environmentTag": {

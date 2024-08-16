@@ -21,11 +21,11 @@ Azure CLI Commands:
 @description('The name of the function app that you wish to create.')
 param functionAppName string
 
-@description('The images storage account name')
+@description('The images storage account name.')
 param imagesStorageAccountName string
 
-@description('The images storage account resource group name')
-param imagesStorageAccountResourceGroup string
+@description('The images storage account resource group name.')
+param imagesStorageAccountResourceGroupName string
 
 @description('Environment tag for resources.')
 @allowed([
@@ -71,7 +71,7 @@ resource functionAppHost 'Microsoft.Web/sites/host@2022-09-01' existing = {
 
 module eventGridSubscriptionsModule './comms-imagesubs.bicep' = {
   name: 'EventGridSubscriptionsModule'
-  scope: resourceGroup(imagesStorageAccountResourceGroup)
+  scope: resourceGroup(imagesStorageAccountResourceGroupName)
   params: {
     producerStorageAccountName: imagesStorageAccountName
     groupImageResizeWebhookEndpoint: groupImageResizeWebhookEndpoint

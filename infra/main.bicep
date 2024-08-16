@@ -39,7 +39,6 @@ param excessiveUseActionGroupName string
 @description('The resource group that contains the action group.')
 param excessiveUseActionGroupResourceGroup string
 
-
 @description('Environment tag for resources.')
 @allowed([
   'dev'
