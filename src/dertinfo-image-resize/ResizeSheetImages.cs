@@ -8,29 +8,28 @@ namespace DertInfo.ImageResize
     {
         public const string ImageFolder = "sheetimages";
         private readonly ILogger<ResizeSheetImages> _logger;
-        private readonly IImageResizeService _imageResizeService;
-        private readonly IBlobWriter _blobWriter;
+        private readonly IImageProcessingService _imageProcessingService;
 
-        public ResizeSheetImages(ILogger<ResizeSheetImages> logger, IImageResizeService imageResizeService, IBlobWriter blobWriter)
+        public ResizeSheetImages(ILogger<ResizeSheetImages> logger, IImageProcessingService imageProcessingService)
         {
             _logger = logger;
-            _imageResizeService = imageResizeService;
-            _blobWriter = blobWriter;
+            _imageProcessingService = imageProcessingService;
         }
 
         [Function(nameof(ResizeSheetImages))]
-        public async Task Run([BlobTrigger(ImageFolder + "/originals/{name}", Source = BlobTriggerSource.EventGrid, Connection = "StorageConnection:Images")] Stream inputBlob, string name)
+        public async Task RunEventGrid([BlobTrigger(ImageFolder + "/originals/{name}", Source = BlobTriggerSource.EventGrid, Connection = "StorageConnection:Images")] Stream inputBlob, string name)
         {
-            _logger.LogInformation($"Resize {ImageFolder} - Processed blob: {name}");
+            _logger.LogInformation($"Resize {ImageFolder} - Processed blob: {name} - EventGrid Trigger");
 
-            // Create the target streams for the resized images.
-            using var stream480x360 = new MemoryStream();
+            await _imageProcessingService.ResizeImageStreamAndSave(inputBlob, name, new List<string>() { "100x100", "480x360" }, ImageFolder);
+        }
 
-            // Resize the images into the new streams
-            await _imageResizeService.ResizeImageAsync(inputBlob, name, "480x360", stream480x360, true);
+        [Function(nameof(ResizeSheetImages) + "Polling")]
+        public async Task RunPolling([BlobTrigger(ImageFolder + "/originals/{name}", Source = BlobTriggerSource.LogsAndContainerScan, Connection = "StorageConnection:Images")] Stream inputBlob, string name)
+        {
+            _logger.LogInformation($"Resize {ImageFolder} - Processed blob: {name} - Polling Trigger");
 
-            // Write the copy to the 100x100 blobs.
-            await _blobWriter.WriteBlobStream(stream480x360, ImageFolder, $"480x360/{name}");
+            await _imageProcessingService.ResizeImageStreamAndSave(inputBlob, name, new List<string>() { "100x100", "480x360" }, ImageFolder);
         }
     }
 }

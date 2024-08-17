@@ -93,11 +93,21 @@ Fill it with the following:
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "StorageConnection:Images": "UseDevelopmentStorage=true"
+    "AzureWebJobs.ResizeDefaultImages.Disabled": "true",
+    "AzureWebJobs.ResizeEventImages.Disabled": "true",
+    "AzureWebJobs.ResizeGroupImages.Disabled": "true",
+    "AzureWebJobs.ResizeSheetImages.Disabled": "true",
+    "AzureWebJobs.ResizeDefaultImagesPolling.Disabled": "false",
+    "AzureWebJobs.ResizeEventImagesPolling.Disabled": "false",
+    "AzureWebJobs.ResizeGroupImagesPolling.Disabled": "false",
+    "AzureWebJobs.ResizeSheetImagesPolling.Disabled": "false"
   }
 }
 ```
 
 This file tells the app where it's state is managed via the storage account "AzureWebJobsStorage" and the storage account where the original images are uploaded to read to be resized "StorageConnection:Images". In development they use the same storage account which can be either a docker asurite or local Azurite running on port 10000, 10001, 10002
+
+Note where we are disabling some functions in development. In the project we have functions that'll trigger by either event grid or by polling the storage account. Event Grid will only work when deployed in Azure with approprate configution so we use polling in local development to ease developemnt.
 
 **User Secrets**
 ```

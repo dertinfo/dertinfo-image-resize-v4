@@ -13,6 +13,7 @@ var host = new HostBuilder()
         // Register Services
         services.AddTransient<IBlobWriter, BlobWriter>();
         services.AddTransient<IImageResizeService, ImageResizeService>();
+        services.AddTransient<IImageProcessingService, ImageProcessingService>();
     })
     .Build();
 

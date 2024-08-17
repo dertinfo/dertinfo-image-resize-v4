@@ -1,24 +1,25 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS installer-env
 
-FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
-WORKDIR /home/site/wwwroot
-EXPOSE 8080
+COPY . /src/dotnet-function-app
+RUN cd /src/dotnet-function-app && \
+mkdir -p /home/site/wwwroot && \
+dotnet publish *.csproj --output /home/site/wwwroot
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["DertInfoImageReziseNET8/DertInfoImageRezise.csproj", "DertInfoImageReziseNET8/"]
-RUN dotnet restore "./DertInfoImageReziseNET8/DertInfoImageRezise.csproj"
-COPY . .
-WORKDIR "/src/DertInfoImageReziseNET8"
-RUN dotnet build "./DertInfoImageRezise.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./DertInfoImageRezise.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /home/site/wwwroot
-COPY --from=publish /app/publish .
+# To enable ssh & remote debugging on app service change the base image to the one below
+# FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0-appservice
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
+    AzureWebJobsStorage=UseDevelopmentStorage=true \
+    FUNCTIONS_WORKER_RUNTIME=dotnet-isolated \
+    StorageConnection:Images=UseDevelopmentStorage=true \
+    AzureWebJobs.ResizeDefaultImages.Disabled=true \
+    AzureWebJobs.ResizeEventImages.Disabled=true \
+    AzureWebJobs.ResizeGroupImages.Disabled=true \
+    AzureWebJobs.ResizeSheetImages.Disabled=true \
+    AzureWebJobs.ResizeDefaultImagesPolling.Disabled=false \
+    AzureWebJobs.ResizeEventImagesPolling.Disabled=false \
+    AzureWebJobs.ResizeGroupImagesPolling.Disabled=false \
+    AzureWebJobs.ResizeSheetImagesPolling.Disabled=false
+
+COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]

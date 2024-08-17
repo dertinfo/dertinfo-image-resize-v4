@@ -127,10 +127,29 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
           value: appInsightsInstumetationKey
         }
+        {
+          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          value: 'true'
+        }
+        {
+          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          value: 'true'
+        }
+        {
+          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          value: 'true'
+        }
+        {
+          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          value: 'true'
+        }
       ]
     }
   }
 }
+// notes - AzureWebJobs.Resize[Type]ImagesPolling.Disabled is a custom setting that is used to disable the targetted function.
+//       - We use this as when developing locally we want to use Azurite which doesn't support event grid triggers.
+//       - This is a workaround to disable polling functions when running in Azure.
 
 // #####################################################
 // Modules
