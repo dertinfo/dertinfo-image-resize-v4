@@ -132,15 +132,15 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'true'
         }
         {
-          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          name: 'AzureWebJobs.ResizeGroupImagesPolling.Disabled'
           value: 'true'
         }
         {
-          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          name: 'AzureWebJobs.ResizeEventImagesPolling.Disabled'
           value: 'true'
         }
         {
-          name: 'AzureWebJobs.ResizeDefaultImagesPolling.Disabled'
+          name: 'AzureWebJobs.ResizeSheetImagesPolling.Disabled'
           value: 'true'
         }
       ]
