@@ -131,7 +131,7 @@ resource stopWorkloadLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
 resource customRole 'Microsoft.Authorization/roleDefinitions@2022-05-01-preview' = {
   name: guid(resourceGroup().id, stopWorkloadLogicApp.name, 'FunctionStopRole')
   properties: {
-    roleName: 'CustomRoleStopFunctionApp'
+    roleName: '${stopWorkloadLogicApp.name}-stopfunctionapp-role'
     description: 'Custom role to allow stopping a function app'
     permissions: [
       {
