@@ -114,7 +114,7 @@ stages:
               deploymentMode: 'Incremental'  
 
 - stage: 'DeployToLive'
-  displayName: 'Deploy Infrastucture To Test'
+  displayName: 'Deploy Infrastucture To Prod'
   dependsOn: DeployToTest
   jobs:
   - deployment: Deploy
@@ -176,7 +176,7 @@ stages:
               location: '$(location)'
               templateLocation: 'Linked artifact'
               csmFile: '$(System.ArtifactsDirectory)/comms.bicep'
-              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-stg.json'
+              csmParametersFile: '$(System.ArtifactsDirectory)/parameters-comms-prod.json'
               overrideParameters: >-
                 -functionAppName $(functionAppName)
               deploymentMode: 'Incremental'
