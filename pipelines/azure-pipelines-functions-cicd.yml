@@ -15,7 +15,7 @@ pr:
 
 stages:
 - stage: 'Build'
-  displayName: 'Build and Publish the Functions'
+  displayName: 'Build and Publish the Image Resize Function App'
   jobs:
   - job: 'Build'
     displayName: 'Build the Function App'
@@ -79,7 +79,7 @@ stages:
           BUILD_BUILDNUMBER: $(Build.BuildNumber)
 
 - stage: 'DeployToTest'
-  displayName: 'Deploy API to Test'
+  displayName: 'Deploy Image Resize Function App to Test'
   dependsOn: OutputInformation
   jobs:
   - deployment: Deploy
@@ -104,7 +104,7 @@ stages:
               deploymentMethod: 'auto'
 
 - stage: 'DeployToLive'
-  displayName: 'Deploy API to Live'
+  displayName: 'Deploy Image Resize Function App to Live'
   dependsOn: DeployToTest
   jobs:
   - deployment: Deploy
