@@ -40,11 +40,37 @@ This project is a C# .NET API currently running .NET8
 
 ## Installation
 
+### Local Development
+
 In order to get this project running locally you are going to need.
 
 - Visual Studio Community
 - Azurite
 - Azure Storage Explorer
+- Docker Desktop
+
+### Docker
+
+To run this function in docker then you can:
+
+Run the file located at infra/docker/docker-compose.yml
+From the root of the repository execute the folowing command: 
+
+```
+docker-compose -f infra/docker/docker-compose.yml up
+
+```
+This will create 2 containers. One with Azurite and one with the Image Resize Function App. It will alos bind a docker volume for the persistance of the iamge data. 
+
+# How To Use 
+
+Once you have the solution running:
+
+1) Open Azure Storage Explorer and connect to Azurite on ports 10000
+2) Create new Blob containers of "groupimages,eventimages,defaultimages,sheetimages"
+3) Create a new blob at the path "originals/" (In the emulator it'll call this a folder)
+4) Watch the function app will create 2 new folders at the root of the cotnainer "100x100", "480x360"
+5) It will then resize the orignal iamge and place it in those folders with the same file name as the original. 
 
 ## Infrastucture
 
@@ -67,9 +93,10 @@ az group create --name di-rg-imageresizev4-[env] --location uksouth
 az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy.bicep --parameters @deploy-params-[env].json
 ```
 
-There are 2 bicep files at this time that are manually deployed and need to be deployed in this order:
+There are 2 bicep files that can be manually deployed and need to be deployed in this order:
 
 - deploy.bicep - the main function app and service plan, alerting and other items
+- You must then deploy the code so that the endpoints for event grid are available. 
 - comms.bicep - this is the setup of event grid against a storage account that contains the images.
 
 ## Running The Project

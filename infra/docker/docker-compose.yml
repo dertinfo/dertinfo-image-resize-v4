@@ -1,0 +1,36 @@
+# This docker compose must be run from the root of the repository with the command
+# > docker-compose -f infra/docker/docker-compose.yml up
+
+version: '3.8' # Docker Compose file version
+
+services:
+
+  # Service for Azurite storage emulator
+  azstorage:
+    container_name: azstorage
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azstorage-data:/data
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0" # Allow access from any IP or Container
+
+  # (LOCAL) Service for Image Resize built from local Dockerfile
+  image-resize:
+    container_name: image-resize
+    image: dertinfo/dertinfo-imageresizev4:latest
+    ports:
+      - "44400:80" # Map host port 44400 to container port 80
+    environment:
+     - AzureWebJobs.ResizeDefaultImages.Disabled=true
+     - AzureWebJobs.ResizeEventImages.Disabled=true
+     - AzureWebJobs.ResizeGroupImages.Disabled=true
+     - AzureWebJobs.ResizeSheetImages.Disabled=true
+     - AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;QueueEndpoint=http://host.docker.internal:10001/devstoreaccount1; # Azurite Connection Available Publically
+     - StorageConnection__Images=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;QueueEndpoint=http://host.docker.internal:10001/devstoreaccount1;  # Azurite Connection Available Publically
+
+volumes:
+  azstorage-data:
+

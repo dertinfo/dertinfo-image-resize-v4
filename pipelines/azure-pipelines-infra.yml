@@ -13,7 +13,7 @@ trigger:
      - main
   paths:
     include:
-      - infra
+      - infra/bicep/*
 
 # Do not trigger the pipeline on pull requests
 pr:
@@ -33,7 +33,7 @@ stages:
         - task: PublishPipelineArtifact@1
           displayName: 'PublishInfrastiuctureAsCode'
           inputs:
-            targetPath: 'infra'
+            targetPath: 'infra/bicep'
             artifact: 'iac'
 
 - stage: Lint
@@ -42,7 +42,7 @@ stages:
     displayName: Lint code
     steps:
       - script: |
-          az bicep build --file infra/main.bicep
+          az bicep build --file infra/bicep/main.bicep
         name: LintBicepCode
         displayName: Run Bicep linter             
   
