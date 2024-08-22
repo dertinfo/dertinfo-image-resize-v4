@@ -14,8 +14,7 @@ This project watches for new images in the following locations in the images sto
 - /groupimages/originals
 - /eventimages/originals
 - /sheetimages/originals
-
-This is in order that images previously uploaded (to originals) are not reprocessed by this function app.
+- /defaultimages/originals
 
 > **Note:** If you are unfamilar with the collection of services that are part of DertInfo please refer to the repository dertinfo/dertinfo.
 
@@ -32,7 +31,17 @@ This is in order that images previously uploaded (to originals) are not reproces
 
 ## Technology
 
-This project is a C# .NET API currently running .NET8
+This project is a C# .NET Function App currently running .NET8
+
+It depends on:
+- Azure Storage Or Azurite
+
+Tooling 
+- Visual Studio Community
+- Azurite
+- Azure Storage Explorer
+- Docker Desktop
+
 
 ## Topology
 
@@ -40,11 +49,35 @@ This project is a C# .NET API currently running .NET8
 
 ## Installation
 
-In order to get this project running locally you are going to need.
+### Local Development
 
-- Visual Studio Community
-- Azurite
-- Azure Storage Explorer
+1) Launch the applciation using the docker-compose file
+2) Stop the container running the "DertInfo Image REsize" service
+3) Launch the service from what tooling you prefer for C# function app development. (Visual Studio Recommended)
+
+
+### Docker
+
+To run this function in docker then you can:
+
+
+From the root of the repository execute the folowing command to run the file located at infra/docker/docker-compose.yml: 
+
+```
+docker-compose -f infra/docker/docker-compose.yml up
+
+```
+This will create 2 containers. One with Azurite and one with the Image Resize Function App. It will also bind a docker volume for the persistance of the iamge data. 
+
+# How To Use 
+
+Once you have the solution running:
+
+1) Open Azure Storage Explorer and connect to Azurite local emulator.
+2) Create new Blob containers of "groupimages,eventimages,defaultimages,sheetimages"
+3) Create a new blob at the path "originals/" (In the emulator calls this a folder)
+4) Watch the function app will create 2 new folders at the root of the container "100x100", "480x360"
+5) It will resize the orignal image and place it in those folders with the same file name as the original. 
 
 ## Infrastucture
 
@@ -67,9 +100,10 @@ az group create --name di-rg-imageresizev4-[env] --location uksouth
 az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy.bicep --parameters @deploy-params-[env].json
 ```
 
-There are 2 bicep files at this time that are manually deployed and need to be deployed in this order:
+There are 2 bicep files that can be manually deployed and need to be deployed in this order:
 
 - deploy.bicep - the main function app and service plan, alerting and other items
+- You must then deploy the code so that the endpoints for event grid are available. 
 - comms.bicep - this is the setup of event grid against a storage account that contains the images.
 
 ## Running The Project
