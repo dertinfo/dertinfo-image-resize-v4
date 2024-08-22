@@ -127,23 +127,3 @@ stages:
               appName: '$(FunctionAppName_Prod)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
               deploymentMethod: 'auto'
-          - task: Docker@2
-            displayName: 'Docker Login'
-            inputs:
-              command: 'login'
-              containerRegistry: 'Docker Hub Service Connection (dertinfo)'
-
-          - task: Docker@2
-            displayName: 'Build Docker Image'
-            inputs:
-              command: 'build'
-              repository: '$(ImageResizeV4DockerRepository)'
-              Dockerfile: '**/Dockerfile'
-              tags: '$(Build.BuildId)'
-
-          - task: Docker@2
-            displayName: 'Push Docker Image'
-            inputs:
-              command: 'push'
-              repository: '$(ImageResizeV4DockerRepository)'
-              tags: '$(Build.BuildId)'
