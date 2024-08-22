@@ -63,7 +63,7 @@ resource actionRuleRequestThresholdReached 'Microsoft.Insights/metricAlerts@2018
         {
           name: 'Excessive Requests 20000'
           criterionType: 'StaticThresholdCriterion'
-          metricName: 'Requests'
+          metricName: 'FunctionExecutionCount'
           metricNamespace: 'Microsoft.Web/sites'
           operator: 'GreaterThan'
           threshold: actionThresholdForRequestsPerDay
