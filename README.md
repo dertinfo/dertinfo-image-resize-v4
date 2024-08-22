@@ -11,9 +11,9 @@ We have a seperate repository as they will both be running at the same time duri
 
 This project watches for new images in the following locations in the images storage accounts.
 
-- /groupimages/originals-a
-- /eventimages/originals-a
-- /sheetimages/originals-a
+- /groupimages/originals
+- /eventimages/originals
+- /sheetimages/originals
 
 This is in order that images previously uploaded (to originals) are not reprocessed by this function app.
 
@@ -32,7 +32,7 @@ This is in order that images previously uploaded (to originals) are not reproces
 
 ## Technology
 
-This project is a C# .NET API currently running .NET Core 3.1
+This project is a C# .NET API currently running .NET8
 
 ## Topology
 
@@ -50,8 +50,10 @@ In order to get this project running locally you are going to need.
 
 This project has a folder of /infra at the root of the repository that contains bicep files that will allow this project to be deployed to a resource group within an Azure subscription. 
 
-For this at this time we are deploying manually from the Azure CLI. This can be done either from an Azure CLoud Shell or from a local install. 
+### Deployments To the hosted site
+There are Azure DevOps pipelines that watch the main branch of this repository and run on commits to code into either the /src or /infra folders
 
+### Deploying to your own subscription
 Use the following commands to setup the infrastucture for this project: 
 
 - env - values of stg,prod
@@ -65,13 +67,10 @@ az group create --name di-rg-imageresizev4-[env] --location uksouth
 az deployment group create --resource-group di-rg-imageresizev4-[env] --template-file deploy.bicep --parameters @deploy-params-[env].json
 ```
 
-There are 4 bicep files at this time that are manually deployed and need to be deployed in this order:
+There are 2 bicep files at this time that are manually deployed and need to be deployed in this order:
 
-- deploy.bicep - the main function app and plan
-- configure.bicep - storage account event grid system topic
-- automation.bicep - alert action and notification groups and automation logic apps
-- montoring.bicep - alerts that trigger automation actions.
-
+- deploy.bicep - the main function app and service plan, alerting and other items
+- comms.bicep - this is the setup of event grid against a storage account that contains the images.
 
 ## Running The Project
 
@@ -109,6 +108,8 @@ This file tells the app where it's state is managed via the storage account "Azu
 
 Note where we are disabling some functions in development. In the project we have functions that'll trigger by either event grid or by polling the storage account. Event Grid will only work when deployed in Azure with approprate configution so we use polling in local development to ease developemnt.
 
+Note that we have 8 functions. The result in the same excecution however in local development the triggers are fired due to polling the storage account for changes. In staging and production they utilise event grid to notify the app of changes. 
+
 **User Secrets**
 ```
 {
@@ -128,12 +129,12 @@ Launch Azure Storage Emulator or Azurite. Connect to the Storage Using Azure Sto
 
 #### From Visual Studio
 You can run the Function App locally from Visual Studio in 2 ways. 
-- 1) Running locally
-- 2) Running in docker desktop
+- 1) Running from visual studio
+- 2) Running in docker using the docker file
 
 ## Usage
 
-Add images to the originals folder (/originals-a path) in the Azure Blob Storage Container and those images will be resized. 
+Add images to the originals folder (/originals path) in the Azure Blob Storage Container and those images will be resized. 
 
 ## Features
 
