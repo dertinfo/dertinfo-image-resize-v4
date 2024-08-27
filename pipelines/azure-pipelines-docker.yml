@@ -1,0 +1,30 @@
+# Trigger the pipeline on /src pushes to the main branch
+trigger:
+  branches:
+   include:
+     - main
+  paths:
+   include:
+    - src/*
+
+# Do not trigger the pipeline on pull requests
+pr:
+  branches:
+    exclude:
+      - '*'
+
+stages:
+- stage: BuildAndPush
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(DockerHubServiceConnectionName)'
+        repository: '$(ImageResizeV4DockerRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: |
+          $(Build.BuildId)
