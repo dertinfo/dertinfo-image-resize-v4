@@ -22,7 +22,7 @@ stages:
     steps:
     - task: Docker@2
       inputs:
-        containerRegistry: '$(DockerHubServiceConnectionName)'
+        containerRegistry: 'Docker Hub Service Connection (dertinfo)'
         repository: '$(ImageResizeV4DockerRepository)'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
