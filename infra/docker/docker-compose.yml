@@ -20,7 +20,10 @@ services:
   # (LOCAL) Service for Image Resize built from local Dockerfile
   image-resize:
     container_name: image-resize
-    image: dertinfo/dertinfo-imageresizev4:latest
+    # image: dertinfo/dertinfo-imageresizev4:latest # To use the image from Docker Hub
+    build:
+      context: ../../src/dertinfo-image-resize
+      dockerfile: Dockerfile
     ports:
       - "44400:80" # Map host port 44400 to container port 80
     environment:
