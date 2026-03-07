@@ -16,6 +16,8 @@ This project watches for new images in the following locations in the images sto
 - /sheetimages/originals
 - /defaultimages/originals
 
+> **Note:** If you create a brand new Azurite storage account you will need to create these containers by hand.
+
 > **Note:** If you are unfamilar with the collection of services that are part of DertInfo please refer to the repository dertinfo/dertinfo.
 
 ## Table of Contents
